@@ -13,6 +13,10 @@ import TableCell from '@tiptap/extension-table-cell'
 import TableHeader from '@tiptap/extension-table-header'
 import TableRow from '@tiptap/extension-table-row'
 
+// For images and resizing them
+import Image from '@tiptap/extension-image'
+import ImageResize from 'tiptap-extension-resize-image';
+
 export const Editor = () => {
     const editor = useEditor({
         editorProps: {
@@ -29,12 +33,14 @@ export const Editor = () => {
                 // allow checkboxes with lists
                 nested: true,
             }),
-        Table.configure({
-            resizable: true,
-        }),
-        TableRow,
-        TableHeader,
-        TableCell,
+            Table.configure({
+                resizable: true,
+            }),
+            TableRow,
+            TableHeader,
+            TableCell,
+            Image,
+            ImageResize,
         ],
         content: `<p>Hello World! 🌎️</p>
         <table>
@@ -51,6 +57,8 @@ export const Editor = () => {
             </tr>
           </tbody>
         </table>
+        <img src="https://placehold.co/800x400" />
+        <img src="https://placehold.co/800x400/6A00F5/white" />
         `,
     })
     return (
