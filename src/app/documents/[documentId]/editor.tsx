@@ -12,7 +12,7 @@ export const Editor = () => {
         editorProps: {
             attributes: {
                 // later these editors will be dynamic and the tailwind wont work
-                style: "paddig-left: 56px; padding-right: 56px;",
+                style: "padding-left: 56px; padding-right: 56px;",
                 class: "focus:outline-none border print:border-0 bg-white border-[#C7C7C7] flex flex-col min-h-[1054px] w-[816px] pt-10 pr-14 pb-10 cursor-text",
             }
         },
@@ -22,7 +22,7 @@ export const Editor = () => {
             TaskItem.configure({
                 // allow checkboxes with lists
                 nested: true,
-            }),
+            })
         ],
         content: '<p>Hello World! 🌎️</p>',
     })
