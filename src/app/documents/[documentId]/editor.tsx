@@ -17,8 +17,42 @@ import TableRow from '@tiptap/extension-table-row'
 import Image from '@tiptap/extension-image'
 import ImageResize from 'tiptap-extension-resize-image';
 
+// Zustand store for editor state
+import { useEditorStore } from '@/store/use-editor-store'
+
 export const Editor = () => {
+    // Get the editor instance from Zustand store
+    const { setEditor } = useEditorStore();
+
     const editor = useEditor({
+        onCreate({ editor}) {
+            //once the editor is created set editor to this in the Zustand store, so it can be used in other components
+            //only updates the editor once when its created
+            setEditor(editor);
+        },
+        onUpdate({ editor }) {
+            // this will update the editor in the Zustand store whenever the editor is updated
+            setEditor(editor);
+        },
+        onDestroy() {
+            setEditor(null);
+        },
+        onBlur({ editor }) {
+            // this will be used to clear the editor when it loses focus
+            setEditor(editor);
+        },
+        onTransaction({ editor }) {
+            // this will be used to clear the editor when a transaction is made
+            setEditor(editor);
+        },
+        onSelectionUpdate({ editor }) {
+            // this will be used to clear the editor when the selection is updated
+            setEditor(editor);
+        },
+        onContentError({ editor }) {
+            // this will be used to clear the editor when there is an error in the content
+            setEditor(editor);
+        },
         editorProps: {
             attributes: {
                 // later these editors will be dynamic and the tailwind wont work

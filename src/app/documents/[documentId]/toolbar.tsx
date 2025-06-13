@@ -3,6 +3,9 @@
 import { LucideIcon, UndoIcon } from "lucide-react";
 import {cn} from "@/lib/utils";
 
+// Zustand store for editor state
+import { useEditorStore } from "@/store/use-editor-store";
+
 interface ToolBarButtonProps {
     onClick: () => void;
     isActive?: boolean;
@@ -25,6 +28,10 @@ const ToolBarButton = ({ onClick, isActive, icon: Icon }: ToolBarButtonProps) =>
 }
 
 const Toolbar = () => {
+    // access the editor from the Zustand store
+    const { editor } = useEditorStore();
+    // console.log("Editor instance in Toolbar:", editor);
+    
     const sections: {
         label: string;
         icon: LucideIcon;
@@ -35,7 +42,8 @@ const Toolbar = () => {
                     {
                         label: "Undo",
                         icon: UndoIcon,
-                        onClick: () => console.log("Undo clicked"),
+                        // when clicked on the button, if editor exist, then chain the commands: first focus on editor, then undo the last change and run the commands in chain
+                        onClick: () => editor?.chain().focus().undo().run(),
                         isActive: false,
                     },
                 ],
