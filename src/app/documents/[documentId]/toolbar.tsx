@@ -12,6 +12,7 @@ import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuTrigger,
+    DropdownMenuItem
 } from "@radix-ui/react-dropdown-menu";
 
 /*
@@ -44,7 +45,7 @@ const FontFamilyButton = () => {
                     <ChevronDownIcon className="ml-2 size-4 shrink-0"/>
                 </button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="p-1 flex flex-col gap-y-1">
+            <DropdownMenuContent className="p-1 flex flex-col gap-y-1 bg-[#F1F4F9] rounded-sm">
                 {
                     fonts.map(
                         ({ label, value }) => 
@@ -179,7 +180,7 @@ const Toolbar = () => {
             ];
 
     return (
-        <div className="bg-[#F1F4F9] px-2.5 py-0.5 rounded-[24px] min-h-[40px] flex items-center gap-x-0.5 overflow-x-auto">
+        <div className="bg-[#F1F4F9] px-2.5 py-0.5 rounded-[24px] min-h-[40px] flex items-center gap-x-0.5 overflow-x-auto z-10">
             {   /* {Text Utility} */
                 sections[0].map(
                     (item) => <ToolBarButton key={item.label} {...item}/>
