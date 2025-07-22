@@ -13,7 +13,74 @@ import {
     DropdownMenuContent,
     DropdownMenuTrigger,
     DropdownMenuItem
-} from "@radix-ui/react-dropdown-menu";
+} from "@/components/ui/dropdown-menu";
+
+// Heading types
+import { type Level } from "@tiptap/extension-heading";
+
+/*
+ * HEADING BUTTON
+ */
+const HeadingLevelButton = () => {
+  const { editor } = useEditorStore();
+  const headings = [
+    { label: "Normal", value: 0, fontSize: "16px" },
+    { label: "Heading 1", value: 1, fontSize: "32px" },
+    { label: "Heading 2", value: 2, fontSize: "28px" },
+    { label: "Heading 3", value: 3, fontSize: "24px" },
+    { label: "Heading 4", value: 4, fontSize: "20px" },
+    { label: "Heading 5", value: 5, fontSize: "16px" }
+  ]
+
+  const getCurrentHeading = () => {
+    for(let level=0; level<=headings.length; level++){
+      if(editor?.isActive("Heading " , {level})) {
+        return `Heading ${level}`
+      }
+      return "Normal";
+    }
+  }
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+          <button className ="h-7 min-w-7 shrink-0 flex items-center justify-center rounded-sm hover:bg-neutral-200/80 px-1.5 overflow-hidden text-sm">
+              <span className="truncate">
+                {getCurrentHeading()}
+              </span>
+              <ChevronDownIcon className="ml-2 size-4 shrink-0"/>
+          </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="p-1 flex flex-col gap-y-1 bg-[#F1F4F9] rounded-sm">
+          {
+              headings.map(
+                  ({ label, value, fontSize }) => 
+                      (
+                          <button 
+                              key={label}
+                              style={{fontSize}}
+                              onClick={()=>{
+                                if(value === 0){
+                                    editor?.chain().focus().setParagraph().run();
+                                }else{
+                                    editor?.chain().focus().toggleHeading({ level: value as Level}).run();
+                                }
+                              }}
+                              className={cn(
+                                  "flex items-center gap-x-2 px-2 py-1 rounded-sm hover:bg-neutral-200/80",
+                                  // if no heading is selected then highlight normal text or if a heading is selected. then highlight it
+                                  (value === 0 && !editor?.isActive("heading")) || editor?.isActive("Heading ", {level: value}) && "bg-neutral-200/80)"
+                                )}
+                          >
+                          {label}
+                          </button>
+                      )
+              )
+          }
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+}
 
 /*
  * FONT FAMILY BUTTON
@@ -189,7 +256,7 @@ const Toolbar = () => {
             <Separator orientation="vertical" className="h-6 bg-neutral-300"/>
             <FontFamilyButton/>
             <Separator orientation="vertical" className="h-6 bg-neutral-300"/>
-            {/* {HEADING} */}
+            <HeadingLevelButton/>
             <Separator orientation="vertical" className="h-6 bg-neutral-300"/>
             {/* {FONT SIZE} */}
             <Separator orientation="vertical" className="h-6 bg-neutral-300"/> 
