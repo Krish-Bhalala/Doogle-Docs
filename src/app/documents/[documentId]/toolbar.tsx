@@ -1,6 +1,6 @@
 'use client'
 
-import { LucideIcon, Redo2Icon, UndoIcon, PrinterIcon, BoldIcon, SpellCheckIcon, ItalicIcon, UnderlineIcon, MessageSquarePlusIcon, ListTodoIcon, RemoveFormattingIcon, ChevronDown, ChevronDownIcon } from "lucide-react";
+import { LucideIcon, Redo2Icon, UndoIcon, PrinterIcon, BoldIcon, SpellCheckIcon, ItalicIcon, UnderlineIcon, MessageSquarePlusIcon, ListTodoIcon, RemoveFormattingIcon, ChevronDown, ChevronDownIcon, HighlighterIcon } from "lucide-react";
 import {cn} from "@/lib/utils";
 
 // Zustand store for editor state
@@ -15,8 +15,9 @@ import {
     DropdownMenuItem
 } from "@/components/ui/dropdown-menu";
 
-// Heading types
+// Types
 import { type Level } from "@tiptap/extension-heading";
+import { type ColorResult, BlockPicker } from "react-color"
 
 /*
  * HEADING BUTTON
@@ -81,6 +82,65 @@ const HeadingLevelButton = () => {
     </DropdownMenu>
   )
 }
+
+
+/*
+ * HIGHLIGHTER
+ */
+const TextHighlighterButton = () => {
+    const { editor } = useEditorStore();
+
+    // Use current color or default to black
+    const value = editor?.getAttributes('highlight').color || "#FFFFFF";
+
+    const onChange = (color: ColorResult) => {
+        editor?.chain().focus().setHighlight({color: color.hex}).run();
+    } 
+
+    return (
+        <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <button className ="h-7 min-w-7 shrink-0 flex flex-col items-center justify-center rounded-sm hover:bg-neutral-200/80 px-1.5 overflow-hidden text-sm">
+                    <HighlighterIcon className="size-4" />
+                    <div className="h-0.5 w-full" style={{ backgroundColor: value}}></div>
+                </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="p-0">
+                <BlockPicker color={value} onChange={onChange}/>
+            </DropdownMenuContent>
+        </DropdownMenu>
+    );
+}
+
+
+/*
+ * COLOR SELECTOR
+ */
+const TextColorButton = () => {
+    const { editor } = useEditorStore();
+
+    // Use current color or default to black
+    const value = editor?.getAttributes('textStyle').color || "#000000";
+
+    const onChange = (color: ColorResult) => {
+        editor?.chain().focus().setColor(color.hex).run();
+    } 
+
+    return (
+        <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <button className ="h-7 min-w-7 shrink-0 flex flex-col items-center justify-center rounded-sm hover:bg-neutral-200/80 px-1.5 overflow-hidden text-sm">
+                    <span className="text-xs">A</span>
+                    <div className="h-0.5 w-full" style={{ backgroundColor: value }}/>
+                </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="p-0">
+                <BlockPicker color={value} onChange={onChange}/>
+            </DropdownMenuContent>
+        </DropdownMenu>
+    );
+}
+
 
 /*
  * FONT FAMILY BUTTON
@@ -258,13 +318,15 @@ const Toolbar = () => {
             <Separator orientation="vertical" className="h-6 bg-neutral-300"/>
             <HeadingLevelButton/>
             <Separator orientation="vertical" className="h-6 bg-neutral-300"/>
-            {/* {FONT SIZE} */}
+
             <Separator orientation="vertical" className="h-6 bg-neutral-300"/> 
             {   /* {Text Marker Section} */
                 sections[1].map(
                     (item) => <ToolBarButton key={item.label} {...item}/>
                 )
             }
+            <TextColorButton />
+            <TextHighlighterButton />
             <Separator orientation="vertical" className="h-6 bg-neutral-300"/>
             {   /* {Collaboration Utility Section} */
                 sections[2].map(
