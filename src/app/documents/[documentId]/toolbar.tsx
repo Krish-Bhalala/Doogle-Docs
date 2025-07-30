@@ -1,6 +1,6 @@
 'use client'
 
-import { LucideIcon, Redo2Icon, UndoIcon, PrinterIcon, BoldIcon, SpellCheckIcon, ItalicIcon, UnderlineIcon, MessageSquarePlusIcon, ListTodoIcon, RemoveFormattingIcon, ChevronDownIcon, HighlighterIcon, LinkIcon } from "lucide-react";
+import { LucideIcon, Redo2Icon, UndoIcon, PrinterIcon, BoldIcon, SpellCheckIcon, ItalicIcon, UnderlineIcon, MessageSquarePlusIcon, ListTodoIcon, RemoveFormattingIcon, ChevronDownIcon, HighlighterIcon, LinkIcon, ImageIcon, UploadIcon, SearchIcon } from "lucide-react";
 import {cn} from "@/lib/utils";
 
 // State manager
@@ -10,12 +10,22 @@ import { useState } from "react"
 import { useEditorStore } from "@/store/use-editor-store";
 import { Separator } from "@/components/ui/separator"
 
-// Font Family support import
+// Dropdown imports
 import { 
     DropdownMenu,
     DropdownMenuContent,
+    DropdownMenuItem,
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
+
+// Dialogue box imports
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogFooter,
+    DialogTitle
+} from "@/components/ui/dialog";
 
 // Types
 import { type Level } from "@tiptap/extension-heading";
@@ -87,6 +97,93 @@ const HeadingLevelButton = () => {
       </DropdownMenuContent>
     </DropdownMenu>
   )
+}
+
+
+/*
+ * ADD IMAGE BUTTON
+ */
+const ImageButton = () => {
+    const { editor } = useEditorStore();
+    const [ isDialogOpen, setIsDialogOpen ] = useState(false);
+    const [ imageUrl, setImageUrl ] = useState("");
+
+    const onChange = (url: string) => {
+        // update the source url of image
+        editor?.chain().focus().setImage({ src: url }).run();
+    };
+
+    const onUpload = () => {
+        //create a new input feild for uploading image
+        const input = document.createElement("input");
+        input.type = "file";
+        //accept all image related extensions
+        input.accept = "image/*";
+        input.onchange = (e) => {
+            //accept the first selected file from user
+            const file = (e.target as HTMLInputElement).files?.[0];
+            if (file){
+                //file loading successful, create a url for it
+                const imageUrl = URL.createObjectURL(file);
+                //update the url
+                onChange(imageUrl);
+            }
+        }
+        //trigger the file selection dialog
+        input.click();
+    };
+
+    const handleImageUrlSubmit = () => {
+        if(imageUrl){
+            onChange(imageUrl); //update url
+            //reset state variables
+            setImageUrl("");
+            setIsDialogOpen(false);
+        }
+    }
+
+    return(
+        <>
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <button className ="h-7 min-w-7 shrink-0 flex flex-col items-center justify-center rounded-sm hover:bg-neutral-200/80 px-1.5 overflow-hidden text-sm">
+                        <ImageIcon className="size-4" />
+                    </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                    <DropdownMenuItem onClick={onUpload}>
+                        <UploadIcon className="size-4 mr-2"/>
+                        Upload
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setIsDialogOpen(true)}>
+                        <SearchIcon className="size-4 mr-2"/>
+                        Paste Image URL
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
+
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle> Insert Image URL </DialogTitle>
+                    </DialogHeader>
+                    <Input
+                        placeholder="Insert Image URL here"
+                        value={imageUrl}
+                        onChange={(e) => setImageUrl(e.target.value)}
+                        onKeyDown={(e) => {
+                            if(e.key === "Enter"){
+                                handleImageUrlSubmit();
+                            }
+                        }}
+                    />
+                    <DialogFooter>
+                        <Button onClick={handleImageUrlSubmit}> Insert </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+        </>
+    );
 }
 
 
@@ -368,6 +465,7 @@ const Toolbar = () => {
             <TextHighlighterButton />
             <Separator orientation="vertical" className="h-6 bg-neutral-300"/>
             <LinkButton />
+            <ImageButton />
             {   /* {Collaboration Utility Section} */
                 sections[2].map(
                     (item) => <ToolBarButton key={item.label} {...item}/>
