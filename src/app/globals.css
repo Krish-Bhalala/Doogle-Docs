@@ -90,6 +90,16 @@ body {
 
 /* Basic editor styles */
 .tiptap {
+  /* Link styles */
+  a {
+    @apply text-purple-800;
+    cursor: pointer;
+
+    &:hover {
+      @apply underline;
+    }
+  }
+
   /* List styles */
   ul, 
   ol {

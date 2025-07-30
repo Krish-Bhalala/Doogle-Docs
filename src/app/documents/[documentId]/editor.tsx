@@ -23,6 +23,7 @@ import FontFamily from '@tiptap/extension-font-family'
 import TextStyle from '@tiptap/extension-text-style'
 import { Color } from '@tiptap/extension-color'
 import Highlight from '@tiptap/extension-highlight'
+import Link from '@tiptap/extension-link'
 
 // Zustand store for editor state
 import { useEditorStore } from '@/store/use-editor-store'
@@ -88,9 +89,16 @@ export const Editor = () => {
             Color,
             Highlight.configure({
                  multicolor: true,
-            })
+            }),
+            Link.configure({
+                openOnClick: true,
+                autolink: true,
+                defaultProtocol: 'https',
+                protocols: ['http', 'https'],
+            }),
         ],
         content: `<p>Hello World! 🌎️</p>
+        <p>Wow, this editor has support for links to the whole <a href="https://en.wikipedia.org/wiki/World_Wide_Web">world wide web</a></p>
         <table>
           <tbody>
             <tr>

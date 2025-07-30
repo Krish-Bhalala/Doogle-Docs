@@ -1,7 +1,10 @@
 'use client'
 
-import { LucideIcon, Redo2Icon, UndoIcon, PrinterIcon, BoldIcon, SpellCheckIcon, ItalicIcon, UnderlineIcon, MessageSquarePlusIcon, ListTodoIcon, RemoveFormattingIcon, ChevronDown, ChevronDownIcon, HighlighterIcon } from "lucide-react";
+import { LucideIcon, Redo2Icon, UndoIcon, PrinterIcon, BoldIcon, SpellCheckIcon, ItalicIcon, UnderlineIcon, MessageSquarePlusIcon, ListTodoIcon, RemoveFormattingIcon, ChevronDownIcon, HighlighterIcon, LinkIcon } from "lucide-react";
 import {cn} from "@/lib/utils";
+
+// State manager
+import { useState } from "react"
 
 // Zustand store for editor state
 import { useEditorStore } from "@/store/use-editor-store";
@@ -11,13 +14,16 @@ import { Separator } from "@/components/ui/separator"
 import { 
     DropdownMenu,
     DropdownMenuContent,
-    DropdownMenuTrigger,
-    DropdownMenuItem
+    DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 
 // Types
 import { type Level } from "@tiptap/extension-heading";
 import { type ColorResult, BlockPicker } from "react-color"
+
+// TextBox
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 /*
  * HEADING BUTTON
@@ -81,6 +87,39 @@ const HeadingLevelButton = () => {
       </DropdownMenuContent>
     </DropdownMenu>
   )
+}
+
+
+/*
+ * LINK BUTTON
+ */
+const LinkButton = () => {
+    const { editor } = useEditorStore();
+    const [ value, setValue ] = useState(editor?.getAttributes("link").href || "");
+
+    const onChange = (link: string) => {
+        // mark the selected text as link
+        editor?.chain().focus().extendMarkRange("link").setLink({ href: link }).run();
+        setValue("");   // reset the state variable
+    }
+
+    return(
+        <DropdownMenu onOpenChange={(open) => {
+            if (open){
+                setValue(editor?.getAttributes("link").href || "");
+            }
+        }}>
+            <DropdownMenuTrigger asChild>
+                <button className ="h-7 min-w-7 shrink-0 flex flex-col items-center justify-center rounded-sm hover:bg-neutral-200/80 px-1.5 overflow-hidden text-sm">
+                    <LinkIcon className="size-4" />
+                </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="p-2.5 flex items-center gap-2">
+                <Input placeholder="https://www.example.com" value={value} onChange={(e) => setValue(e.target.value)}/>
+                <Button onClick={() => onChange(value)}> Apply </Button>
+            </DropdownMenuContent>
+        </DropdownMenu>
+    );
 }
 
 
@@ -328,6 +367,7 @@ const Toolbar = () => {
             <TextColorButton />
             <TextHighlighterButton />
             <Separator orientation="vertical" className="h-6 bg-neutral-300"/>
+            <LinkButton />
             {   /* {Collaboration Utility Section} */
                 sections[2].map(
                     (item) => <ToolBarButton key={item.label} {...item}/>
