@@ -1,6 +1,6 @@
 'use client'
 
-import { LucideIcon, Redo2Icon, UndoIcon, PrinterIcon, BoldIcon, SpellCheckIcon, ItalicIcon, UnderlineIcon, MessageSquarePlusIcon, ListTodoIcon, RemoveFormattingIcon, ChevronDownIcon, HighlighterIcon, LinkIcon, ImageIcon, UploadIcon, SearchIcon } from "lucide-react";
+import { LucideIcon, Redo2Icon, UndoIcon, PrinterIcon, BoldIcon, SpellCheckIcon, ItalicIcon, UnderlineIcon, MessageSquarePlusIcon, ListTodoIcon, RemoveFormattingIcon, ChevronDownIcon, HighlighterIcon, LinkIcon, ImageIcon, UploadIcon, SearchIcon, AlignCenterIcon, AlignLeftIcon, AlignRightIcon, AlignJustifyIcon} from "lucide-react";
 import {cn} from "@/lib/utils";
 
 // State manager
@@ -34,6 +34,59 @@ import { type ColorResult, BlockPicker } from "react-color"
 // TextBox
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+
+
+/*
+ * TEXT ALIGN BUTTON
+ */
+const TextAlignButton = () => {
+  const { editor } = useEditorStore();
+  const alignments = [ 
+    {
+        label: 'Align Center',
+        value:'center',
+        icon: AlignCenterIcon
+    },
+    {
+        label: 'Align Left',
+        value:'left',
+        icon: AlignLeftIcon
+    },
+    {
+        label: 'Align Right',
+        value:'right',
+        icon: AlignRightIcon
+    },
+  ];
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+          <button className ="h-7 min-w-7 shrink-0 flex items-center justify-center rounded-sm hover:bg-neutral-200/80 px-1.5 overflow-hidden text-sm">
+              <AlignJustifyIcon className="size-4"/>
+          </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="p-1 flex flex-col gap-y-1 bg-[#F1F4F9] rounded-sm">
+        {alignments.map(({ label, value, icon: Icon}) => {
+            return (
+                <button
+                    key={value}
+                    onClick={() => editor?.chain().focus().setTextAlign(value).run()}
+                    className={cn(
+                        "flex items-center gap-x-2 px-2 py-1 rounded-sm hover:bg-neutral-200/80",
+                        editor?.isActive({ textAlign: value }) && 'bg-neutral-200/80'
+                    )}
+                >
+                    <Icon className="size-4"/>
+                    <span className="text-sm">{label}</span>
+                </button>
+            )
+        })}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+}
+
 
 /*
  * HEADING BUTTON
@@ -465,12 +518,15 @@ const Toolbar = () => {
             <TextHighlighterButton />
             <Separator orientation="vertical" className="h-6 bg-neutral-300"/>
             <LinkButton />
+            <TextAlignButton />
             <ImageButton />
             {   /* {Collaboration Utility Section} */
                 sections[2].map(
                     (item) => <ToolBarButton key={item.label} {...item}/>
                 )
             }
+            <Separator orientation="vertical" className="h-6 bg-neutral-300"/> 
+            
         </div>
     );
 }
