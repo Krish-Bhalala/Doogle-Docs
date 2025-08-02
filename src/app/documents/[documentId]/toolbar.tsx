@@ -1,6 +1,6 @@
 'use client'
 
-import { LucideIcon, Redo2Icon, UndoIcon, PrinterIcon, BoldIcon, SpellCheckIcon, ItalicIcon, UnderlineIcon, MessageSquarePlusIcon, ListTodoIcon, RemoveFormattingIcon, ChevronDownIcon, HighlighterIcon, LinkIcon, ImageIcon, UploadIcon, SearchIcon, AlignCenterIcon, AlignLeftIcon, AlignRightIcon, AlignJustifyIcon} from "lucide-react";
+import { LucideIcon, Redo2Icon, UndoIcon, PrinterIcon, BoldIcon, SpellCheckIcon, ItalicIcon, UnderlineIcon, MessageSquarePlusIcon, ListTodoIcon, RemoveFormattingIcon, ChevronDownIcon, HighlighterIcon, LinkIcon, ImageIcon, UploadIcon, SearchIcon, AlignCenterIcon, AlignLeftIcon, AlignRightIcon, AlignJustifyIcon, ListOrderedIcon, ListIcon} from "lucide-react";
 import {cn} from "@/lib/utils";
 
 // State manager
@@ -63,7 +63,7 @@ const TextAlignButton = () => {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
           <button className ="h-7 min-w-7 shrink-0 flex items-center justify-center rounded-sm hover:bg-neutral-200/80 px-1.5 overflow-hidden text-sm">
-              <AlignJustifyIcon className="size-4"/>
+              <AlignLeftIcon className="size-4"/>
           </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="p-1 flex flex-col gap-y-1 bg-[#F1F4F9] rounded-sm">
@@ -75,6 +75,55 @@ const TextAlignButton = () => {
                     className={cn(
                         "flex items-center gap-x-2 px-2 py-1 rounded-sm hover:bg-neutral-200/80",
                         editor?.isActive({ textAlign: value }) && 'bg-neutral-200/80'
+                    )}
+                >
+                    <Icon className="size-4"/>
+                    <span className="text-sm">{label}</span>
+                </button>
+            )
+        })}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+}
+
+
+/*
+ * TEXT ALIGN BUTTON
+ */
+const ListButton = () => {
+  const { editor } = useEditorStore();
+  const lists = [ 
+    {
+        label: 'Bullet List',
+        icon: ListIcon,
+        isActive: () => editor?.isActive('bulletList'),
+        onClick: () => editor?.chain().focus().toggleBulletList().run()
+    },
+    {
+        label: 'Ordered List',
+        icon: ListOrderedIcon,
+        isActive: () => editor?.isActive('orderedList'),
+        onClick: () => editor?.chain().focus().toggleOrderedList().run()
+    }
+  ];
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+          <button className ="h-7 min-w-7 shrink-0 flex items-center justify-center rounded-sm hover:bg-neutral-200/80 px-1.5 overflow-hidden text-sm">
+              <ListIcon className="size-4"/>
+          </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="p-1 flex flex-col gap-y-1 bg-[#F1F4F9] rounded-sm">
+        {lists.map(({ label, icon: Icon, onClick, isActive}) => {
+            return (
+                <button
+                    key={label}
+                    onClick={onClick}
+                    className={cn(
+                        "flex items-center gap-x-2 px-2 py-1 rounded-sm hover:bg-neutral-200/80",
+                        isActive() && 'bg-neutral-200/80'
                     )}
                 >
                     <Icon className="size-4"/>
@@ -519,6 +568,7 @@ const Toolbar = () => {
             <Separator orientation="vertical" className="h-6 bg-neutral-300"/>
             <LinkButton />
             <TextAlignButton />
+            <ListButton />
             <ImageButton />
             {   /* {Collaboration Utility Section} */
                 sections[2].map(
