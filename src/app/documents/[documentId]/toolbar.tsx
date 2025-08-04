@@ -1,10 +1,10 @@
 'use client'
 
-import { LucideIcon, Redo2Icon, UndoIcon, PrinterIcon, BoldIcon, SpellCheckIcon, ItalicIcon, UnderlineIcon, MessageSquarePlusIcon, ListTodoIcon, RemoveFormattingIcon, ChevronDownIcon, HighlighterIcon, LinkIcon, ImageIcon, UploadIcon, SearchIcon, AlignCenterIcon, AlignLeftIcon, AlignRightIcon, AlignJustifyIcon, ListOrderedIcon, ListIcon} from "lucide-react";
+import { LucideIcon, Redo2Icon, UndoIcon, PrinterIcon, BoldIcon, SpellCheckIcon, ItalicIcon, UnderlineIcon, MessageSquarePlusIcon, ListTodoIcon, RemoveFormattingIcon, ChevronDownIcon, HighlighterIcon, LinkIcon, ImageIcon, UploadIcon, SearchIcon, AlignCenterIcon, AlignLeftIcon, AlignRightIcon, ListOrderedIcon, ListIcon, MinusIcon, PlusIcon} from "lucide-react";
 import {cn} from "@/lib/utils";
 
 // State manager
-import { useState } from "react"
+import React, { useState } from "react"
 
 // Zustand store for editor state
 import { useEditorStore } from "@/store/use-editor-store";
@@ -89,7 +89,102 @@ const TextAlignButton = () => {
 
 
 /*
- * TEXT ALIGN BUTTON
+ * FONT SIZE BUTTON
+ */
+const FontSizeButton = () => {
+  const { editor } = useEditorStore();
+  const currentFontSize = editor?.getAttributes("textStyle").fontSize ?
+                            editor?.getAttributes('textStyle').fontSize.replace("px", "") :
+                            "16";
+
+  const [fontSize, setFontSize] = useState(currentFontSize);
+  const [inputValue, setInputValue] = useState(fontSize);
+  const [isEditing, setIsEditing] = useState(false);
+
+  const updateFontSize = (newSize: string) => {
+    const size = parseInt(newSize);
+    if(!isNaN(size) && size>0){
+        editor?.chain().focus().setFontSize(`${size}px`).run();
+        setFontSize(newSize);
+        setInputValue(newSize);
+        setIsEditing(false);
+    }
+  }
+
+  //updates the fontsize based on the typed font value form user
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+  }
+
+  //handles the case where user types and shifts the focus without pressing enter. Assumes it changes the input 
+  const handleInputBlur = () => {
+    updateFontSize(inputValue);
+  }
+
+  //updates the font size to the input value
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if(e.key === "Enter"){
+        e.preventDefault(); //remove default behaviour
+        updateFontSize(inputValue);
+        editor?.commands.focus(); //shift focus back to editor
+    }
+  }
+
+  // increment and decrement handlers for current font size
+  const increment = () => {
+    const newSize = parseInt(fontSize) + 1;
+    updateFontSize(newSize.toString());
+  }
+  const decrement = () => {
+    const newSize = parseInt(fontSize) - 1;
+    if(newSize > 0){
+      updateFontSize(newSize.toString());
+    }
+  }
+
+  return(
+    <div className="flex items-center gap-x-0.5">
+        <button 
+            onClick={decrement}
+            className ="h-7 w-7 shrink-0 flex items-center justify-center rounded-sm hover:bg-neutral-200/80"
+        >
+            <MinusIcon className="size-4"/>
+        </button>
+        {
+            isEditing ? (
+                <input 
+                    type="text"
+                    onChange={handleInputChange}
+                    onBlur={handleInputBlur}
+                    onKeyDown={handleKeyDown}
+                    value={inputValue}
+                    className ="h-7 w-10 text-sm text-center border border-neutral-400 rounded-sm bg-transparent focus:ring-0"
+                />
+            ) : (
+                <button 
+                    onClick={() => {
+                        setIsEditing(true);
+                        setFontSize(currentFontSize);
+                    }}
+                    className ="h-7 w-10 text-sm text-center border border-neutral-400 rounded-sm bg-transparent"
+                >
+                    {currentFontSize}
+                </button>
+            )
+        }
+        <button 
+            onClick={increment}
+            className ="h-7 w-7 shrink-0 flex items-center justify-center rounded-sm hover:bg-neutral-200/80"
+        >
+            <PlusIcon className="size-4"/>
+        </button>
+    </div>
+  )
+}
+
+
+/*
+ * LIST BUTTON
  */
 const ListButton = () => {
   const { editor } = useEditorStore();
@@ -556,7 +651,7 @@ const Toolbar = () => {
             <Separator orientation="vertical" className="h-6 bg-neutral-300"/>
             <HeadingLevelButton/>
             <Separator orientation="vertical" className="h-6 bg-neutral-300"/>
-
+            <FontSizeButton />
             <Separator orientation="vertical" className="h-6 bg-neutral-300"/> 
             {   /* {Text Marker Section} */
                 sections[1].map(
