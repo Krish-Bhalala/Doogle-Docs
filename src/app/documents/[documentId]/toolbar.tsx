@@ -1,6 +1,6 @@
 'use client'
 
-import { LucideIcon, Redo2Icon, UndoIcon, PrinterIcon, BoldIcon, SpellCheckIcon, ItalicIcon, UnderlineIcon, MessageSquarePlusIcon, ListTodoIcon, RemoveFormattingIcon, ChevronDownIcon, HighlighterIcon, LinkIcon, ImageIcon, UploadIcon, SearchIcon, AlignCenterIcon, AlignLeftIcon, AlignRightIcon, ListOrderedIcon, ListIcon, MinusIcon, PlusIcon} from "lucide-react";
+import { LucideIcon, Redo2Icon, UndoIcon, PrinterIcon, BoldIcon, SpellCheckIcon, ItalicIcon, UnderlineIcon, MessageSquarePlusIcon, ListTodoIcon, RemoveFormattingIcon, ChevronDownIcon, HighlighterIcon, LinkIcon, ImageIcon, UploadIcon, SearchIcon, AlignCenterIcon, AlignLeftIcon, AlignRightIcon, ListOrderedIcon, ListIcon, MinusIcon, PlusIcon, FoldVertical} from "lucide-react";
 import {cn} from "@/lib/utils";
 
 // State manager
@@ -222,6 +222,69 @@ const ListButton = () => {
                     )}
                 >
                     <Icon className="size-4"/>
+                    <span className="text-sm">{label}</span>
+                </button>
+            )
+        })}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+}
+
+
+/*
+ * LINE HEIGHT BUTTON
+ */
+const LineHeightButton = () => {
+  const { editor } = useEditorStore();
+
+  const lists = [ 
+    {
+        label: 'Default',
+        isActive: () => editor?.isActive('textStyle', { lineHeight: '1' }),
+        onClick: () => editor?.chain().focus().setMark('textStyle', { lineHeight: '1.5' }).run()
+    },
+    {
+        label: 'Single',
+        isActive: () => editor?.isActive('textStyle', { lineHeight: '1' }),
+        onClick: () => editor?.chain().focus().setMark('textStyle', { lineHeight: '1' }).run()
+
+    },
+    {
+        label: '1.25',
+        isActive: () => editor?.isActive('textStyle', { lineHeight: '1.25' }),
+        onClick: () => editor?.chain().focus().setMark('textStyle', { lineHeight: '1.25' }).run()
+    },
+    {
+        label: '1.5',
+        isActive: () => editor?.isActive('textStyle', { lineHeight: '1.5' }),
+        onClick: () => editor?.chain().focus().setMark('textStyle', { lineHeight: '1.5' }).run()
+    },
+    {
+        label: 'Double',
+        isActive: () => editor?.isActive('textStyle', { lineHeight: '2' }),
+        onClick: () => editor?.chain().focus().setMark('textStyle', { lineHeight: '2' }).run()
+    },
+  ];
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+          <button className ="h-7 min-w-7 shrink-0 flex items-center justify-center rounded-sm hover:bg-neutral-200/80 px-1.5 overflow-hidden text-sm">
+              <FoldVertical className="size-4"/>
+          </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="p-1 flex flex-col gap-y-1 bg-[#F1F4F9] rounded-sm">
+        {lists.map(({ label, onClick, isActive}) => {
+            return (
+                <button
+                    key={label}
+                    onClick={onClick}
+                    className={cn(
+                        "flex items-center gap-x-2 px-2 py-1 rounded-sm hover:bg-neutral-200/80",
+                        isActive() && 'bg-neutral-200/80'
+                    )}
+                >
                     <span className="text-sm">{label}</span>
                 </button>
             )
@@ -663,6 +726,7 @@ const Toolbar = () => {
             <Separator orientation="vertical" className="h-6 bg-neutral-300"/>
             <LinkButton />
             <TextAlignButton />
+            <LineHeightButton />
             <ListButton />
             <ImageButton />
             {   /* {Collaboration Utility Section} */

@@ -21,6 +21,7 @@ import ImageResize from 'tiptap-extension-resize-image';
 import Underline from '@tiptap/extension-underline'
 import FontFamily from '@tiptap/extension-font-family'
 import TextStyle from '@tiptap/extension-text-style'
+import LineHeight from '@tiptap/extension-text-style'
 import { Color } from '@tiptap/extension-color'
 import Highlight from '@tiptap/extension-highlight'
 import Link from '@tiptap/extension-link'
@@ -88,6 +89,7 @@ export const Editor = () => {
             Underline,
             FontFamily,
             TextStyle,
+            LineHeight,
             Color,
             Highlight.configure({
                  multicolor: true,
